@@ -1,7 +1,22 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
+# Copyright (C) 2018 Embest
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import argparse
 import sqlite3
-import sys
 import os
 import matplotlib.pyplot as plt
 from datetime import datetime
@@ -62,7 +77,6 @@ def plotSnr(database,constellations,top=4):
     for row in c.execute('SELECT * FROM GSV ORDER BY Time'):
         if row[0] > 1000000000:
             time = datetime.utcfromtimestamp(row[0])
-            print(time)
             if row[3]==1 and row[2] and row[3] in constellations and row[6]==0:
                 GPSL1Time[row[1]].append(time)
                 GPSL1Snr[row[1]].append(row[2])
@@ -103,34 +117,18 @@ def plotSnr(database,constellations,top=4):
             if UtcTime!=row[0]:
                 print(UtcTime)
                 for i in constellations:
-                    if i== 3:
-                        if len(L1Snr[i]) >= 2:
-                            L1Snr[i].sort(reverse=True)
-                            avg = (L1Snr[i][0]+L1Snr[i][1])/2 # TBD
-                            TopL1Time[i].append(time)
-                            TopL1Snr[i].append(avg)
-                            print(UtcTime, "L1", avg)
-
-                        if len(L5Snr[i]) >= 2:
-                            L5Snr[i].sort(reverse=True)
-                            avg = (L5Snr[i][0]+L5Snr[i][1])/2
-                            TopL5Time[i].append(time)
-                            TopL5Snr[i].append(avg)
-                            print(UtcTime, "L5", avg)
-                    else:
-                        if len(L1Snr[i]) >= top:
-                            L1Snr[i].sort(reverse=True)
-                            avg = (L1Snr[i][0]+L1Snr[i][1]+L1Snr[i][2]+L1Snr[i][3])/4 # TBD
-                            TopL1Time[i].append(time)
-                            TopL1Snr[i].append(avg)
-                            print(UtcTime, "L1", avg)
-
-                        if len(L5Snr[i]) >= top:
-                            L5Snr[i].sort(reverse=True)
-                            avg = (L5Snr[i][0]+L5Snr[i][1]+L5Snr[i][2]+L5Snr[i][3])/4
-                            TopL5Time[i].append(time)
-                            TopL5Snr[i].append(avg)
-                            print(UtcTime, "L5", avg)
+                    if len(L1Snr[i]) >= top:
+                        L1Snr[i].sort(reverse=True)
+                        avg = sum(L1Snr[i][0:top])/top
+                        TopL1Time[i].append(time)
+                        TopL1Snr[i].append(avg)
+                        print(UtcTime, "L1", avg)
+                    if len(L5Snr[i]) >= top:
+                        L5Snr[i].sort(reverse=True)
+                        avg = sum(L5Snr[i][0:top])/top
+                        TopL5Time[i].append(time)
+                        TopL5Snr[i].append(avg)
+                        print(UtcTime, "L5", avg)
                 
                 UtcTime = row[0]
                 for i in constellations:
@@ -187,25 +185,15 @@ def plotSnr(database,constellations,top=4):
     textstr = ""
     for key in TopL1Time.keys():
         if len(TopL1Time.get(key)) > 0:
-            if key == 3:
-                lab = CONSTELLATION[key]+ "T2"
-                plt.plot(TopL1Time[key], TopL1Snr[key], linestyle='-', marker='+', linewidth=5,  label=lab)
-                textstr += CONSTELLATION[key] + " L1 Top2 Avg: " + '{:4.2f}'.format(sum(TopL1Snr[key])/len(TopL1Snr[key])) + " In:" + str(len(TopL1Snr[key])) + "\n"
-            else:
-                lab = CONSTELLATION[key]+ "T"+str(top)
-                plt.plot(TopL1Time[key], TopL1Snr[key], linestyle='-', marker='+', linewidth=5,  label=lab)
-                textstr += CONSTELLATION[key] + " L1 Top" + str(top) + " Avg: " + '{:4.2f}'.format(sum(TopL1Snr[key])/len(TopL1Snr[key])) + " In:" + str(len(TopL1Snr[key])) + "\n"
+            lab = CONSTELLATION[key]+ "T"+str(top)
+            plt.plot(TopL1Time[key], TopL1Snr[key], linestyle='-', marker='+', linewidth=5,  label=lab)
+            textstr += CONSTELLATION[key] + " L1 Top" + str(top) + " Avg: " + '{:4.2f}'.format(sum(TopL1Snr[key])/len(TopL1Snr[key])) + " In:" + str(len(TopL1Snr[key])) + "\n"
 
     for key in TopL5Time.keys():
         if len(TopL5Time.get(key)) > 0:
-            if key == 3:
-                lab = CONSTELLATION[key]+ "T2L5"
-                plt.plot(TopL5Time[key], TopL5Snr[key], linestyle='-', marker='+', linewidth=5,  label=lab)
-                textstr += CONSTELLATION[key] + " L5 Top2 Avg: " + '{:4.2f}'.format(sum(TopL5Snr[key])/len(TopL5Snr[key])) + " In:" + str(len(TopL5Snr[key])) + "\n"
-            else:
-                lab = CONSTELLATION[key]+ "T"+str(top)+"L5"
-                plt.plot(TopL5Time[key], TopL5Snr[key], linestyle='-', marker='+', linewidth=5,  label=lab)
-                textstr += CONSTELLATION[key] + " L5 Top" + str(top) + " Avg: " + '{:4.2f}'.format(sum(TopL5Snr[key])/len(TopL5Snr[key])) + " In:" + str(len(TopL5Snr[key])) + "\n"
+            lab = CONSTELLATION[key]+ "T"+str(top)+"L5"
+            plt.plot(TopL5Time[key], TopL5Snr[key], linestyle='-', marker='+', linewidth=5,  label=lab)
+            textstr += CONSTELLATION[key] + " L5 Top" + str(top) + " Avg: " + '{:4.2f}'.format(sum(TopL5Snr[key])/len(TopL5Snr[key])) + " In:" + str(len(TopL5Snr[key])) + "\n"
 
     ax.grid(True, linestyle='-.')
 
@@ -226,7 +214,7 @@ def plotSnr(database,constellations,top=4):
     plt.xticks(rotation=90)
 
     props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
-    ax.text(0.05, 0.95, textstr, transform=ax.transAxes, fontsize=14,
+    ax.text(0.05, 0.95, textstr.strip(), transform=ax.transAxes, fontsize=14,
         verticalalignment='top', bbox=props)
 
     plt.show()
@@ -271,39 +259,31 @@ def plotSpeed(database):
     plt.show()
 
 
-
-def onHelp():
-    print("############### GPS  Plot  Tools ###############\r\nVersion:0.1\r\nAuthor: Wayne Guo\r\n")
-    print("                User Commands                 ")
-    print("SYNOPSIS\r\n\plot.py SOURCE CMD [OPTION]")
-    print("DESCRIPTION\r\n\tCMD:")
-    print("\t\thelp: Show help")
-    print("\t\tsnr: Plot SNR")
-    print("\t\ttcxo: Plot TCXO offset & uncertainty")
-
-
 def main():
-    print("AAAABBB")
-    pass
+    parser = argparse.ArgumentParser(description='NMEA Analyzer Plot Tool', 
+                                     epilog='Example>> nmeaplot gps.nmea.db')
+    parser.add_argument('input',  type=str , help= "input file: db file")
+    parser.add_argument('option', type=str , help= "option: snr, speed")
+    parser.add_argument('-c',     type=int, default= 0, help='Constellations, default is 0')
+    parser.add_argument('-t',     type=int, default= 4, help='topN strongest points in summary, default is 4')
+    args = parser.parse_args()
+    print(args)
+
+    if args.option == 'snr':
+        constellations = [0]
+        if args.c == 0:
+            constellations = [1,2,3,4,5,6]
+        else:
+            constellations = [args.c]
+        print("plot SNR")
+        plotSnr(args.input,constellations, args.t)
+    elif args.option == 'speed':
+        plotSpeed(args.input)
+    else:
+        print("option not supported")
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 3:
-        option = "help";
-    else:
-        source=sys.argv[1]
-        option=sys.argv[2]
-        
-    if option == 'snr':
-        constellation=sys.argv[3]
-        constellations = [0]
-        if constellation == "0":
-            constellations = [1,2,3,4,5,6]
-        else:
-            constellations = [int(constellation)]
-        plotSnr(source,constellations)
-    if option == 'speed':
-        plotSpeed(source)
-    else:
-        onHelp()
+    main()
+
 
