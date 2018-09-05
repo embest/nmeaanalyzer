@@ -72,6 +72,7 @@ def plotSnr(database,constellations,top=4):
     L5Snr  = {1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[], 8:[], 9:[], 10:[] }
     L1Snr  = {1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[], 8:[], 9:[], 10:[] }
 
+    count = 0
     conn = sqlite3.connect(database)
     c = conn.cursor()
     for row in c.execute('SELECT * FROM GSV ORDER BY Time'):
@@ -131,6 +132,7 @@ def plotSnr(database,constellations,top=4):
                         print(UtcTime, "L5", avg)
                 
                 UtcTime = row[0]
+                count+=1
                 for i in constellations:
                     L1Snr[i] = []
                     L5Snr[i] = []
@@ -197,8 +199,17 @@ def plotSnr(database,constellations,top=4):
 
     ax.grid(True, linestyle='-.')
 
-    ax.xaxis.set_major_locator(MinuteLocator(range(0, 60, 4)))
-    ax.xaxis.set_minor_locator(MinuteLocator())
+    locator = 0
+    if count < 1000:
+        locator = 1
+    elif count < 2000:
+        locator = 2
+    else:
+        locator = 4
+    
+
+    ax.xaxis.set_major_locator(MinuteLocator(range(0, 60, locator)))
+    # ax.xaxis.set_minor_locator(MinuteLocator())
     ax.xaxis.set_major_formatter(DateFormatter('%H%M%S'))
 
     ax.format_xdata = mdates.DateFormatter('%H%M%S')
