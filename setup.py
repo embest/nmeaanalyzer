@@ -17,6 +17,7 @@ setup(
 
     install_requires=[
         'pynmea2',
+        'matplotlib'
     ],
     
     entry_points = {

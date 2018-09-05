@@ -1,0 +1,13 @@
+language: python
+python:
+- '3.6'
+# install:
+# - pip install -r requirements.txt
+script: python setup.py bdist_egg
+deploy:
+  provider: pypi
+  user: embest
+  password:
+    secure: Sb7SkgWoIaLhoseZTLk50NmyDsOzMmyiDNU9iaagK+/Dkr9ohdLjltBfpOyQPvpqkXzDUe3+peCRIpdLTr4PDS4tV366S8NgRsCB6v7e/YHCmB+r3jXMu/A04Vl8gRdqnaWTwYKCGEhEMWUNsV+s4s791AIdv3c3WjN/HEJicW8Bj4gFCD9PFndGVtbmhijqWzVuhJOLjqLc3qVkmYuO2iEIzp9AQvRWDO5mGwO2FMOVqAgQ8SCKQKhPQJBIbOg7Srmb1L3dw1qYVGXq9UGit7wQU2mzYzEKl3wcTCtq2M1JSzL2pqp7sGCYeXgJs3FP++RaDcS3oIwuBleBCYeP4cJ+qMTR2stCNTt/qWZJx/+GiPWsIXzPx4cigMfeVKdQVSN7mFOMDFDomyA4oAKkoO4JeW54yd/9eCm3U6f7W75Qi6B7eKy03oE6yu4xi5HDBHcEzxHxXQRBJyg0VEJYqWJY0B7y3xCgimh/RSQiW7OYVTuWUe+dVM0IBdt32ESOZCw3fzCktWKqUtelWoQWoxdb26QGoUkkXWUNELkRPGF4fQw/B4hHAB31IfobjLhCp7p+8IrXSRars3Vfdny4aP24VyrhemTBtteDdt/GzDmc18LYX0vPFYKdGEwjezYbA3IoqqWO2ifr/VO94xDJ3HwmvqRv/eM0LvaNEV6+vfs=
+  on:
+    tags: true
