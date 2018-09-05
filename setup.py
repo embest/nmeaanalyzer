@@ -26,7 +26,6 @@ setup(
     },
     classifiers=[
         'Intended Audience :: Developers',
-        'License :: Apache License 2.0',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
