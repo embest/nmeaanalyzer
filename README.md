@@ -51,3 +51,15 @@ It will install pynmea2, six, cycler, pyparsing, python-dateutil, numpy, pytz, k
 	Add `backend: TkAgg` to the bottom of `lib/python3.6/site-packages/matplotlib/mpl-data/matplotlibrc`
 	
 
+- ModuleNotFoundError: No module named 'tkinter'
+	
+	Fix Ubuntu:
+	
+	```
+	sudo apt install python3-tk
+	```
+	Fix CentOS:
+	
+	```
+	sudo yum install tkinter
+	``` 
