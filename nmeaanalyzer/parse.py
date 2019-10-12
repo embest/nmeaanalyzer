@@ -39,8 +39,8 @@ def parse(src, database):
         cur.execute("DROP TABLE IF EXISTS RMC")
         cur.execute("CREATE TABLE IF NOT EXISTS RMC(Time INTEGER, Validity Char, Latitude FLOAT, Longitude FLOAT, Speed FLOAT, Track FLOAT, Magnetic FLOAT);")
         
-        utctime=datetime(1970,1,1,0,0,0, tzinfo=timezone.utc).time()
-        utcdate=datetime(1970,1,1,0,0,0, tzinfo=timezone.utc).date()
+        utctime=datetime(1990,1,1,0,0,0, tzinfo=timezone.utc).time()
+        utcdate=datetime(1990,1,1,0,0,0, tzinfo=timezone.utc).date()
         utcoffset=int((datetime.now()-datetime.utcnow()).total_seconds() + 0.1)
 
         timestamp = 0
