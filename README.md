@@ -1,9 +1,9 @@
 # NMEA Analyzer  [![Build Status](https://travis-ci.org/embest/nmeaanalyzer.svg?branch=master)](https://travis-ci.org/embest/nmeaanalyzer)
 
-## Install
+## Install (Python3)
 
 ```
-virtualenv nmea
+python3 -m venv nmea
 source ./nmea/bin/activate
 pip install nmeaanalyzer
 ```
